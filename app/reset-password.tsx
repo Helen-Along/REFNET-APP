@@ -2,8 +2,7 @@ import * as React from 'react';
 import { Image, View } from 'react-native';
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
-import {P} from "~/components/ui/typography"
-import { Link } from "expo-router";
+import {H1, P} from "~/components/ui/typography"
 
 export default function Screen() {
   const [email, setEmail] = React.useState('');
@@ -15,8 +14,7 @@ export default function Screen() {
   const onPasswordInput = (text: string) => {
     setPassword(text);
   };
-
-  function handleUserSignup(){
+  function handleUserSignin(){
     if(email && password){
       console.log("User signed in")
       return;
@@ -25,55 +23,39 @@ export default function Screen() {
   }
   return (
     <View className="flex-1 justify-between items-center gap-5 px-6 py-14 bg-[#131313]">
-      <View className="w-full h-10 object-contain">
-        <Image
-          source={require("~/assets/images/Logo.png")}
-          style={{ width: "100%", height: "100%", objectFit: "contain" }}
-        />
-      </View>
-      <View className="w-full mb-auto mt-auto gap-6">
+      <View className='w-full mb-auto mt-auto gap-6'>
         <View className="w-full gap-4">
           <Input
-            placeholder="Email address"
+            placeholder="Email Address"
             value={email}
             onChangeText={onEmailInput}
             aria-labelledby="inputLabel"
             aria-errormessage="inputError"
             className="bg-[#333] border-0 !h-14 text-white"
-            autoComplete="email"
-            textContentType="emailAddress"
+            autoComplete='email'
+            textContentType='emailAddress'
             keyboardType="email-address"
             autoCapitalize="none"
           />
           <Input
-            placeholder="Password"
+            placeholder="New Password"
             value={password}
             onChangeText={onPasswordInput}
             aria-labelledby="inputLabel"
             aria-errormessage="inputError"
             className="bg-[#333] border-0 !h-14 text-white"
-            autoComplete="password"
-            textContentType="password"
+            autoComplete='password'
+            textContentType='password'
             secureTextEntry
           />
         </View>
-        <Button onPress={handleUserSignup} className="w-full" size={"lg"}>
-          <P>Login for free</P>
+        <Button onPress={handleUserSignin} className="w-full" size={'lg'}>
+          <P>Reset password now</P>
         </Button>
-        <P className="text-center">
-          <P style={{ fontFamily: "Inter_400Regular" }}>or</P>{" "}<Link href="/reset-password">Recover Password</Link>
-        </P>
-        <P
-          className="text-center text-lg pt-4 color-[#b3b3b3]"
-          style={{ fontFamily: "Inter_400Regular" }}
-        >
-          Sign in to access your account and manage your air conditioning
-          solutions
+        <P className="text-center text-base pt-4 color-[#b3b3b3]" style={{fontFamily: "Inter_400Regular"}}>
+          Forgot your password? No worries{"\n"}lets help you get back to your account    
         </P>
       </View>
-      <P className="text-center" >
-          <Link href="/sign-up">I'm new here <P className="text-blue-400">Sign me up</P></Link>
-        </P>
     </View>
   );
 }

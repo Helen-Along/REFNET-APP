@@ -13,6 +13,7 @@ const Input = React.forwardRef<React.ElementRef<typeof TextInput>, TextInputProp
           className
         )}
         placeholderClassName={cn('text-muted-foreground', placeholderClassName)}
+        style={{fontFamily: 'Inter_400Regular'}}
         {...props}
       />
     );
