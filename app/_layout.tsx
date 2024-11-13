@@ -132,6 +132,18 @@ export default function RootLayout() {
               navigationBarColor: "#131313",
             }}
           />
+          <Stack.Screen
+            name="user_dashboard/index"
+            options={{
+              title: "User Dashboard",
+              headerShown: false,
+              headerTitleStyle: {
+                fontFamily: "Inter_400Regular",
+                fontSize: 16,
+              },
+              navigationBarColor: "#131313",
+            }}
+          />
         </Stack>
       </EmailProvider>
       <PortalHost />

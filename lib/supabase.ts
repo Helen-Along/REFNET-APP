@@ -149,6 +149,24 @@ export async function fetchProductFromDB(id:number) {
     }
 }
 
+// Count total number of products in cart
+export async function countTotalProductsInCart(user_email:string){
+  const {data, error} = await supabase
+    .from('cart')
+    .select('quantity')
+    .eq('user_email', user_email)
+
+    if(error){
+      return `Error: ${error.message || JSON.stringify(error)}`;
+    }else{
+      let total = 0;
+      data.forEach((item:any) => {
+        total += item.quantity;
+      });
+      return total;
+    }
+}
+
 // Check if product exists in cart
 export async function checkProductInCart(product_id:number, user_email:string){
   const {data, error} = await supabase

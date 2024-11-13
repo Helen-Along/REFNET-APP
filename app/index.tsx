@@ -26,6 +26,10 @@ const displayNotification = (
 };
 
 export default function Screen() {
+    // router.push({
+    //   pathname: "/user_dashboard",
+    //   params: { email: email },
+    // });
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const emailContext = useEmail();
