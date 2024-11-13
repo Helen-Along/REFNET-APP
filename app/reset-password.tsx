@@ -2,7 +2,29 @@ import * as React from 'react';
 import { Image, View } from 'react-native';
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
-import {H1, P} from "~/components/ui/typography"
+import { H1, P } from "~/components/ui/typography"
+import { Link, router } from "expo-router";
+import { showMessage } from "react-native-flash-message";
+import { resetUserPassword } from "~/lib/supabase";
+
+const displayNotification = (
+  message: string,
+  type: "danger" | "success" | "warning"
+) => {
+  return showMessage({
+    message,
+    type,
+    hideOnPress: true,
+    style: {
+      marginTop: 40,
+    },
+    titleStyle: {
+      fontFamily: "Inter_500Medium",
+      textAlign: "center",
+    },
+  });
+};
+
 
 export default function Screen() {
   const [email, setEmail] = React.useState('');
@@ -14,13 +36,27 @@ export default function Screen() {
   const onPasswordInput = (text: string) => {
     setPassword(text);
   };
-  function handleUserSignin(){
-    if(email && password){
-      console.log("User signed in")
-      return;
+  const handlePasswordRest = async () => {
+    if (email && password) {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        displayNotification("Invalid Email", "warning");
+        return;
+      }
+      const response = await resetUserPassword(email, password);
+      if (typeof response === "string" && response.startsWith("Error:")) {
+        displayNotification(response, "danger");
+        return;
+      } else {
+        displayNotification("Password reset successful", "success");
+        router.push({
+          pathname: "/",
+        });
+      }
+    } else {
+      displayNotification("Please fill all fields", "warning");
     }
-    console.log("Please fill in all the inputs")
-  }
+  };
   return (
     <View className="flex-1 justify-between items-center gap-5 px-6 py-14 bg-[#131313]">
       <View className='w-full mb-auto mt-auto gap-6'>
@@ -49,7 +85,7 @@ export default function Screen() {
             secureTextEntry
           />
         </View>
-        <Button onPress={handleUserSignin} className="w-full" size={'lg'}>
+        <Button onPress={handlePasswordRest} className="w-full" size={'lg'}>
           <P>Reset password now</P>
         </Button>
         <P className="text-center text-base pt-4 color-[#b3b3b3]" style={{fontFamily: "Inter_400Regular"}}>
