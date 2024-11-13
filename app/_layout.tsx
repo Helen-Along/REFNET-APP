@@ -11,6 +11,19 @@ import { useColorScheme } from '~/lib/useColorScheme';
 import { PortalHost } from '@rn-primitives/portal';
 import { ThemeToggle } from '~/components/ThemeToggle';
 import { setAndroidNavigationBar } from '~/lib/android-navigation-bar';
+import {
+  useFonts,
+  Inter_100Thin,
+  Inter_200ExtraLight,
+  Inter_300Light,
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+  Inter_800ExtraBold,
+  Inter_900Black,
+} from '@expo-google-fonts/inter';
+import { Loading } from '~/components/Loading';
 
 const LIGHT_THEME: Theme = {
   dark: false,
@@ -59,20 +72,57 @@ export default function RootLayout() {
     });
   }, []);
 
+  let [fontsLoaded] = useFonts({
+    Inter_100Thin,
+    Inter_200ExtraLight,
+    Inter_300Light,
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
+    Inter_800ExtraBold,
+    Inter_900Black,
+  });
+
   if (!isColorSchemeLoaded) {
     return null;
   }
+  if (!fontsLoaded) {
+    return <Loading />;
+  }
 
   return (
-    <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-      <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+    <ThemeProvider value={DARK_THEME}>
+      <StatusBar style={'light'} />
       <Stack>
         <Stack.Screen
           name='index'
           options={{
-            title: 'Starter Base',
-            headerRight: () => <ThemeToggle />,
-            headerShown: false
+            title: 'Index',
+            headerShown: false,
+            navigationBarColor: "#131313"
+          }}
+
+        />
+        <Stack.Screen
+          name='reset-password'
+          options={{
+            title: 'Reset Password',
+            headerTitleAlign: 'center',
+            headerStyle: {backgroundColor: '#101010'},
+            headerTitleStyle: {fontFamily: 'Inter_400Regular', fontSize: 16},
+            navigationBarColor: "#131313"
+          }}
+
+        />
+        <Stack.Screen
+          name='sign-up'
+          options={{
+            title: 'Create an account',
+            headerTitleAlign: 'center',
+            headerStyle: {backgroundColor: '#101010'},
+            headerTitleStyle: {fontFamily: 'Inter_400Regular', fontSize: 16},
+            navigationBarColor: "#131313"
           }}
 
         />
