@@ -24,6 +24,8 @@ import {
   Inter_900Black,
 } from '@expo-google-fonts/inter';
 import { Loading } from '~/components/Loading';
+import FlashMessage from "react-native-flash-message";
+import { EmailProvider } from "./EmailContext"; 
 
 const LIGHT_THEME: Theme = {
   dark: false,
@@ -93,41 +95,59 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={DARK_THEME}>
-      <StatusBar style={'light'} />
-      <Stack>
-        <Stack.Screen
-          name='index'
-          options={{
-            title: 'Index',
-            headerShown: false,
-            navigationBarColor: "#131313"
-          }}
-
-        />
-        <Stack.Screen
-          name='reset-password'
-          options={{
-            title: 'Reset Password',
-            headerTitleAlign: 'center',
-            headerStyle: {backgroundColor: '#101010'},
-            headerTitleStyle: {fontFamily: 'Inter_400Regular', fontSize: 16},
-            navigationBarColor: "#131313"
-          }}
-
-        />
-        <Stack.Screen
-          name='sign-up'
-          options={{
-            title: 'Create an account',
-            headerTitleAlign: 'center',
-            headerStyle: {backgroundColor: '#101010'},
-            headerTitleStyle: {fontFamily: 'Inter_400Regular', fontSize: 16},
-            navigationBarColor: "#131313"
-          }}
-
-        />
-      </Stack>
+      <StatusBar style={"light"} />
+      <EmailProvider>
+        <Stack>
+          <Stack.Screen
+            name="index"
+            options={{
+              title: "Index",
+              headerShown: false,
+              navigationBarColor: "#131313",
+            }}
+          />
+          <Stack.Screen
+            name="reset-password"
+            options={{
+              title: "Reset Password",
+              headerTitleAlign: "center",
+              headerStyle: { backgroundColor: "#101010" },
+              headerTitleStyle: {
+                fontFamily: "Inter_400Regular",
+                fontSize: 16,
+              },
+              navigationBarColor: "#131313",
+            }}
+          />
+          <Stack.Screen
+            name="sign-up"
+            options={{
+              title: "Create an account",
+              headerTitleAlign: "center",
+              headerStyle: { backgroundColor: "#101010" },
+              headerTitleStyle: {
+                fontFamily: "Inter_400Regular",
+                fontSize: 16,
+              },
+              navigationBarColor: "#131313",
+            }}
+          />
+          <Stack.Screen
+            name="user_dashboard/index"
+            options={{
+              title: "User Dashboard",
+              headerShown: false,
+              headerTitleStyle: {
+                fontFamily: "Inter_400Regular",
+                fontSize: 16,
+              },
+              navigationBarColor: "#131313",
+            }}
+          />
+        </Stack>
+      </EmailProvider>
       <PortalHost />
+      <FlashMessage position="top" />
     </ThemeProvider>
   );
 }

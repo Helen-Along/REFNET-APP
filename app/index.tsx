@@ -3,11 +3,37 @@ import { Image, View } from 'react-native';
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
 import {P} from "~/components/ui/typography"
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
+import { showMessage } from "react-native-flash-message";
+import { checkUser, validateUserCredentials } from "~/lib/supabase";
+import { useEmail } from "~/app/EmailContext";
+
+const displayNotification = (
+  message: string,
+  type: "danger" | "success" | "warning"
+) => {
+  return showMessage({
+    message,
+    type,
+    style: {
+      marginTop: 40,
+    },
+    titleStyle: {
+      fontFamily: "Inter_500Medium",
+      textAlign: "center",
+    },
+  });
+};
 
 export default function Screen() {
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+    // router.push({
+    //   pathname: "/user_dashboard",
+    //   params: { email: email },
+    // });
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const emailContext = useEmail();
+  const { setEmail: setEmailContext } = emailContext || { setEmail: () => {} };
 
   const onEmailInput = (text: string) => {
     setEmail(text);
@@ -16,13 +42,47 @@ export default function Screen() {
     setPassword(text);
   };
 
-  function handleUserSignup(){
-    if(email && password){
-      console.log("User signed in")
-      return;
+  const handleLogin = async () => {
+    if (email && password) {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        displayNotification("Invalid Email", "warning");
+        return;
+      }
+      const UserAvailable = await checkUser(email);
+      if (!UserAvailable) {
+        displayNotification("User does not exist", "danger");
+        return;
+      }
+      const isValid = await validateUserCredentials(email, password);
+      if (isValid["role"]) {
+        const user_role = isValid["role"];
+        console.log(isValid["role"]);
+        if (user_role === "Customer") {
+          router.push({
+            pathname: "/user_dashboard",
+            params: { email: email },
+          });
+        } else if (user_role === "Finance Manager") {
+          router.push({
+            pathname: "../finance_manager_dashboard",
+            params: { email: email },
+          });
+        } else if (user_role === "Dispatch Manager") {
+          router.push({
+            pathname: "../dispatch_manager_dashboard",
+            params: { email: email },
+          });
+        }
+
+        setEmailContext(email);
+        return;
+      }
+      displayNotification("Invalid Credentials", "danger");
+    } else {
+      displayNotification("Please fill all the fields", "warning");
     }
-    console.log("Please fill in all the inputs")
-  }
+  };
   return (
     <View className="flex-1 justify-between items-center gap-5 px-6 py-14 bg-[#131313]">
       <View className="w-full h-10 object-contain">
@@ -57,11 +117,12 @@ export default function Screen() {
             secureTextEntry
           />
         </View>
-        <Button onPress={handleUserSignup} className="w-full" size={"lg"}>
+        <Button onPress={handleLogin} className="w-full" size={"lg"}>
           <P>Login for free</P>
         </Button>
         <P className="text-center">
-          <P style={{ fontFamily: "Inter_400Regular" }}>or</P>{" "}<Link href="/reset-password">Recover Password</Link>
+          <P style={{ fontFamily: "Inter_400Regular" }}>or</P>{" "}
+          <Link href="/reset-password">Recover Password</Link>
         </P>
         <P
           className="text-center text-lg pt-4 color-[#b3b3b3]"
@@ -71,9 +132,11 @@ export default function Screen() {
           solutions
         </P>
       </View>
-      <P className="text-center" >
-          <Link href="/sign-up">I'm new here <P className="text-blue-400">Sign me up</P></Link>
-        </P>
+      <P className="text-center">
+        <Link href="/sign-up">
+          I'm new here <P className="text-blue-400">Sign me up</P>
+        </Link>
+      </P>
     </View>
   );
 }

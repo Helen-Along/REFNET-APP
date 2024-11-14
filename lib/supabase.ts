@@ -53,17 +53,17 @@ export async function validateUserCredentials(email: string, password: string) {
   }
 
 // Function that adds users to the database
-export async function addUserToDB(first_name:string, last_name:string, email:string, password_hash:string, phone_number:number){
+export async function addUserToDB(username:string, full_name:string, email:string, password_hash:string, phone_number:number){
   // Check If user is in the databse
   const user = await checkUser(email)
   if(user['email']){
-    return "User Already Exists";
+    return "Exists: User already exists";
   }
   const role = "Customer"
   const { data, error } = await supabase
     .from('users')
     .insert([
-      { first_name, last_name, email, password_hash, phone_number, role }
+      { username, full_name, email, password_hash, phone_number, role }
     ])
     .single();
 
@@ -92,10 +92,10 @@ export async function insertFeedbackToDB(user_id: string, product_id: number, fe
 
 // Update user account details
 // Function that updates user details
-export async function updateUserDetails(first_name: string, last_name: string, email: string, password_hash: string, phone_number: number) {
+export async function updateUserDetails(username: string, full_name: string, email: string, password_hash: string, phone_number: number) {
   const { data, error } = await supabase
     .from('users')
-    .update({ first_name, last_name, email, password_hash, phone_number })
+    .update({ username, full_name, email, password_hash, phone_number })
     .eq('email', email)
     .single();
 
@@ -146,6 +146,24 @@ export async function fetchProductFromDB(id:number) {
       return `Error: ${error.message || JSON.stringify(error)}`;
     }else{
       return data;
+    }
+}
+
+// Count total number of products in cart
+export async function countTotalProductsInCart(user_email:string){
+  const {data, error} = await supabase
+    .from('cart')
+    .select('quantity')
+    .eq('user_email', user_email)
+
+    if(error){
+      return `Error: ${error.message || JSON.stringify(error)}`;
+    }else{
+      let total = 0;
+      data.forEach((item:any) => {
+        total += item.quantity;
+      });
+      return total;
     }
 }
 
